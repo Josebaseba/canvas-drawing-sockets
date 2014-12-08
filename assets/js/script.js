@@ -1,6 +1,8 @@
 (function() {
   var App;
   App = {};
+  var COLORS = ['#00CCFF', '#00FF00', '#FF3300', '#FF3399', '#3366FF', '#663300'];
+  var MY_COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
   /*
     Init
   */
@@ -11,13 +13,13 @@
     document.getElementsByTagName('article')[0].appendChild(App.canvas);
     App.ctx = App.canvas.getContext('2d');
     App.ctx.fillStyle = 'solid';
-    App.ctx.strokeStyle = '#ECD018';
     App.ctx.lineWidth = 5;
     App.ctx.lineCap = 'round';
     io.socket.on('draw', function(data) {
-      return App.draw(data.x, data.y, data.type);
+      return App.draw(data.x, data.y, data.type, data.color);
     });
-    App.draw = function(x, y, type) {
+    App.draw = function(x, y, type, color) {
+      App.ctx.strokeStyle = color;
       if (type === 'dragstart') {
         App.ctx.beginPath();
         return App.ctx.moveTo(x, y);
@@ -40,11 +42,12 @@
     e.offsetY = e.layerY;
     x = e.offsetX;
     y = e.offsetY;
-    App.draw(x, y, type);
+    App.draw(x, y, type, MY_COLOR);
     io.socket.emit('drawClick', {
       x: x,
       y: y,
-      type: type
+      type: type,
+      color: MY_COLOR
     });
   });
   $(function() {
