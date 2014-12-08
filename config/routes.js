@@ -22,6 +22,6 @@
 
 module.exports.routes = {
 
-  'post /subscribe' : 'drawingController.subscribe'
+  'get /subscribe' : 'drawingController.subscribe'
 
 };
