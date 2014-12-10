@@ -1,0 +1,6 @@
+/.tmp/*
+/.git/*
+**/.tmp/**
+/views/*
+/assets/*
+/avatar/*

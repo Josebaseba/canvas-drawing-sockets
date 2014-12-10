@@ -15,22 +15,30 @@
     App.ctx.fillStyle = 'solid';
     App.ctx.lineWidth = 5;
     App.ctx.lineCap = 'round';
+
+    /* */
+    /* SOCKETS
+    /* Socket will listen to the server draw event
+    /* to draw it with the App.draw method
+    /* */
     io.socket.on('draw', function(data) {
       return App.draw(data.x, data.y, data.type, data.color);
     });
-    App.draw = function(x, y, type, color) {
-      App.ctx.strokeStyle = color;
-      if (type === 'dragstart') {
-        App.ctx.beginPath();
-        return App.ctx.moveTo(x, y);
-      } else if (type === 'drag') {
-        App.ctx.lineTo(x, y);
-        return App.ctx.stroke();
-      } else {
-        return App.ctx.closePath();
-      }
-    };
   };
+
+  App.draw = function(x, y, type, color) {
+    App.ctx.strokeStyle = color;
+    if (type === 'dragstart') {
+      App.ctx.beginPath();
+      return App.ctx.moveTo(x, y);
+    } else if (type === 'drag') {
+      App.ctx.lineTo(x, y);
+      return App.ctx.stroke();
+    } else {
+      return App.ctx.closePath();
+    }
+  };
+
   /*
     Draw Events
   */
@@ -43,6 +51,12 @@
     x = e.offsetX;
     y = e.offsetY;
     App.draw(x, y, type, MY_COLOR);
+
+    /* */
+    /* SOCKETS
+    /* Emit from our socket to the server with the drawclick event
+    /* data of our super cool draw in the canvas
+    /* */
     io.socket.emit('drawClick', {
       x: x,
       y: y,
@@ -50,10 +64,19 @@
       color: MY_COLOR
     });
   });
+
   $(function() {
+    /* */
+    /* SOCKETS
+    /* Use Sails.io library method to subscribe the socket to the
+    /* drawClick event in the server to send the draw data after
+    /* */
+
     io.socket.get('/subscribe', {}, function(data, res){
       console.log(data);
     });
+
     return App.init();
   });
+
 }).call(this);
